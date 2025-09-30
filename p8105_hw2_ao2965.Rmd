@@ -7,7 +7,7 @@ output: github_document
 
 Importing Trashwheel
 
-```{r}
+```{r setup, include=FALSE}
 library(tidyverse)
 library(readxl)
 trash_df <- read_excel(
