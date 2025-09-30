@@ -43,6 +43,19 @@ select (dumpster, month, year, date, table, everything())
 ```
 Importing Trashwheel and modifying Captain Trash Wheel sheet
 ```{r}
-
+library(tidyverse)
+library(readxl)
+capt_df <- read_excel(
+ "202509 Trash Wheel Collection Data.xlsx",
+ sheet = "Captain Trash Wheel",
+ range = "A2:L39",
+ na = c("NA", ".", "")
+) |>
+ janitor::clean_names() |>
+ mutate(
+ table = "captain trash wheel"
+ ) |>
+select (dumpster, month, year, date, table, everything())
+ 
 ```
 
