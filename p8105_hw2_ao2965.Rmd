@@ -1,0 +1,27 @@
+---
+title: "p8105_hw2_ao2965"
+author: "Alissa Shams Orchi"
+date: "2025-09-30"
+output: github_document
+---
+
+Importing Trashwheel
+```{r}
+library(tidyverse)
+library(readxl)
+trash_df <- read_excel(
+ "202509 Trash Wheel Collection Data.xlsx",
+ sheet = "Mr. Trash Wheel",
+ range = "A2:N709",
+ na = c("NA", ".", "")
+) |>
+ janitor::clean_names() |>
+ mutate(
+ table = "mr. trash wheel", 
+ sports_balls = as.integer(round(sports_balls))
+) |>
+ select (dumpster, month, year, date, table, everything())
+```
+
+
+```{r}
