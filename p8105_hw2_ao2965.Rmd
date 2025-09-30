@@ -24,11 +24,12 @@ trash_df <- read_excel(
  select (dumpster, month, year, date, table, everything())
 ```
 
-Importing Trashwheel and modifying Mr.Trash Wheel sheet
+Importing Trashwheel and modifying Professor Trash Wheel sheet
+
 ```{r}
 library(tidyverse)
 library(readxl)
-trash_df <- read_excel(
+proff_df <- read_excel(
  "202509 Trash Wheel Collection Data.xlsx",
  sheet = "Professor Trash Wheel",
  range = "A2:M134",
@@ -40,3 +41,8 @@ trash_df <- read_excel(
  ) |>
 select (dumpster, month, year, date, table, everything())
 ```
+Importing Trashwheel and modifying Captain Trash Wheel sheet
+```{r}
+
+```
+
