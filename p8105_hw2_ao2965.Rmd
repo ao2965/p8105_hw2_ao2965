@@ -5,9 +5,9 @@ date: "2025-09-30"
 output: github_document
 ---
 
-Importing Trashwheel
+Importing Trashwheel and modifying Mr.Trash Wheel sheet
 
-```{r setup, include=FALSE}
+```{r}
 library(tidyverse)
 library(readxl)
 trash_df <- read_excel(
@@ -24,5 +24,19 @@ trash_df <- read_excel(
  select (dumpster, month, year, date, table, everything())
 ```
 
-
+Importing Trashwheel and modifying Mr.Trash Wheel sheet
 ```{r}
+library(tidyverse)
+library(readxl)
+trash_df <- read_excel(
+ "202509 Trash Wheel Collection Data.xlsx",
+ sheet = "Professor Trash Wheel",
+ range = "A2:M134",
+ na = c("NA", ".", "")
+) |>
+ janitor::clean_names() |>
+ mutate(
+ table = "professor trash wheel"
+ ) |>
+select (dumpster, month, year, date, table, everything())
+```
