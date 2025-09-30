@@ -65,3 +65,15 @@ trash_tidy=
   bind_rows(trash_df, proff_df, gwynns_df)
 ```
 The combined Trash Wheel dataset includes `r nrow(trash_tidy)` observations across the three trash wheels (Mr. Trash Wheel, Professor Trash Wheel, and Gwynns Falls Trash Wheel). Each row corresponds to a dumpster load of trash, with key variables such as the date of collection (`date`), the total weight in tons (`weight_tons`), and counts of specific items like plastic bottles (`plastic_bottles`), cigarette butts (`cigarette_butts`), and sports balls (`sports_balls`). For example, the total weight of trash collected by **Professor Trash Wheel** is `r proff_df |> summarise(total = sum(weight_tons, na.rm = TRUE)) |> pull(total)` tons. In contrast, **Gwynns Falls Trash Wheel** collected `r gwynns_df |> filter(month == "June", year == 2022) |> summarise(total = sum(cigarette_butts, na.rm = TRUE)) |> pull(total)` cigarette butts in June 2022 alone. These summaries highlight both the scale of debris removed and the variation in composition across trash wheels and time.
+
+Question 3
+
+Importing Zip codes csv
+```{r}
+library(tidyverse)
+zips_df=
+  read_csv("Zip Codes.csv", na = c("NA", ".", ""))|>
+ janitor::clean_names() 
+  
+```
+
