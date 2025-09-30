@@ -73,7 +73,9 @@ Importing Zip codes csv
 library(tidyverse)
 zips_df=
   read_csv("Zip Codes.csv", na = c("NA", ".", ""))|>
- janitor::clean_names() 
+ janitor::clean_names() |>
+ mutate (
+    county = str_to_lower(county))
   
 ```
 Importing Zip zori csv
@@ -87,13 +89,18 @@ select (-region_type, -state_name, -state,-city)|>
   pivot_longer(
     cols=x2015_01_31:x2024_08_31,
     names_to="date",
-    values_to="zori"
+    values_to="price"
   )|>
  mutate (
     county = str_to_lower(county),       
     county = gsub("county", "", county), 
     date = gsub("x","", date),
     county = str_squish(county))
+```
+combine the two datasets using leftjoin
+```{r}
+zorizip_tidy = 
+  left_join(zori_df, zips_df, by = c("zip_code","county"))
 ```
 
 
