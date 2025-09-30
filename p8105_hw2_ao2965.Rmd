@@ -76,4 +76,24 @@ zips_df=
  janitor::clean_names() 
   
 ```
+Importing Zip zori csv
+```{r}
+library(tidyverse)
+zori_df=
+  read_csv("Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv", na = c("NA", ".", ""))|>
+ janitor::clean_names() |>
+select (-region_type, -state_name, -state,-city)|>
+  rename(zip_code=region_name,county=county_name)|>
+  pivot_longer(
+    cols=x2015_01_31:x2024_08_31,
+    names_to="date",
+    values_to="zori"
+  )|>
+ mutate (
+    county = str_to_lower(county),       
+    county = gsub("county", "", county), 
+    date = gsub("x","", date),
+    county = str_squish(county))
+```
+
 
