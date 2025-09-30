@@ -100,7 +100,8 @@ select (-region_type, -state_name, -state,-city)|>
 combine the two datasets using leftjoin
 ```{r}
 zorizip_tidy = 
-  left_join(zori_df, zips_df, by = c("zip_code","county"))
+  left_join(zori_df, zips_df, by = c("zip_code","county")) |>
+  relocate (zip_code, county, neighborhood, price, date)
 ```
 
 
