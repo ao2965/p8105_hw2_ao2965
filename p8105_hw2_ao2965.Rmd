@@ -41,21 +41,20 @@ proff_df <- read_excel(
  ) |>
 select (dumpster, month, year, date, table, everything())
 ```
-Importing Trashwheel and modifying Captain Trash Wheel sheet
+Importing Trashwheel and modifying Gwynns Falls Trash Wheel sheet
 ```{r}
 library(tidyverse)
 library(readxl)
-capt_df <- read_excel(
+gwynns_df <- read_excel(
  "202509 Trash Wheel Collection Data.xlsx",
- sheet = "Captain Trash Wheel",
- range = "A2:L39",
+ sheet = "Gwynns Falls Trash Wheel",
+ range = "A2:L351",
  na = c("NA", ".", "")
 ) |>
  janitor::clean_names() |>
  mutate(
- table = "captain trash wheel"
+ table = "gwynns falls trash wheel"
  ) |>
 select (dumpster, month, year, date, table, everything())
- 
 ```
 
