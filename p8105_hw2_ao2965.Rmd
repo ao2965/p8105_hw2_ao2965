@@ -75,7 +75,11 @@ zips_df=
   read_csv("Zip Codes.csv", na = c("NA", ".", ""))|>
  janitor::clean_names() |>
  mutate (
-    county = str_to_lower(county))|>
+    county  = case_match(county, "New York" ~ "Manhattan", .default = county),
+    zip_code = as.numeric(zip_code),
+    county  = if_else(zip_code == "11693", "Queens", county),
+    county  = if_else(zip_code == "11201", "Kings",  county)
+  ) |>
    arrange(zip_code) |>
   relocate (zip_code, county)
 ```
@@ -137,6 +141,7 @@ filter(month == 1) |>
   arrange(price_diff) |>           
 arrange(price_diff) |> 
   head(10)|>
-  select(zip_code, county, neighborhood, month, `2020`, `2021`, price_diff)
+  rename(borough=county)|>
+  select(zip_code, borough, neighborhood, month, `2020`, `2021`, price_diff)
 ```
 
