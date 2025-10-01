@@ -75,11 +75,12 @@ zips_df=
   read_csv("Zip Codes.csv", na = c("NA", ".", ""))|>
  janitor::clean_names() |>
  mutate (
-    county = str_to_lower(county))
-  
+    county = str_to_lower(county))|>
+   arrange(zip_code) |>
+  relocate (zip_code, county)
 ```
 Importing Zip zori csv
-```{r}
+```{r} 
 library(tidyverse)
 zori_df=
   read_csv("Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv", na = c("NA", ".", ""))|>
@@ -95,8 +96,14 @@ select (-region_type, -state_name, -state,-city)|>
     county = str_to_lower(county),       
     county = gsub("county", "", county), 
     date = gsub("x","", date),
-    county = str_squish(county))
+      date   = as.Date(sub("^x", "", date), format = "%Y_%m_%d"),
+    county = str_squish(county),
+    price= as.numeric(price)  
+  ) |>
+  arrange(price) |>
+  relocate (zip_code, county, price, date)
 ```
+
 combine the two datasets using leftjoin
 ```{r}
 zorizip_tidy = 
@@ -104,4 +111,9 @@ zorizip_tidy =
   relocate (zip_code, county, neighborhood, price, date)
 ```
 
+The zorizip_tidy dataset, we can track rent trends over time within each zipcode, county and neighbourhood. The combined zorizip_tidy dataset includes `r nrow(zorizip_tidy)` observations. Each row corresponds to a particular ZIP code at a specific date, with key variables including the observed rent index (`price`), geographic identifiers (e.g. `zip_code`, `county`, `neighborhood`), and data such as the `file_date` of the ZIP metadata. The number of unique ZIP codes is `r zorizip_tidy |> distinct(zip_code) |> nrow()`, and the number of unique neighborhoods is `r zorizip_tidy |> distinct(neighborhood) |> nrow()`.
+
+```{r}
+
+```
 
