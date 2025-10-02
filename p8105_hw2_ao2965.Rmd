@@ -4,7 +4,7 @@ author: "Alissa Shams Orchi"
 date: "2025-09-30"
 output: github_document
 ---
-Question 2
+##Question 2
 Importing Trashwheel and modifying Mr.Trash Wheel sheet
 
 ```{r, message=FALSE}
@@ -64,9 +64,13 @@ Combining the tables
 trash_tidy=
   bind_rows(trash_df, proff_df, gwynns_df)
 ```
-The combined Trash Wheel dataset includes `r nrow(trash_tidy)` observations across the three trash wheels (Mr. Trash Wheel, Professor Trash Wheel, and Gwynns Falls Trash Wheel). Each row corresponds to a dumpster load of trash, with key variables such as the date of collection (`date`), the total weight in tons (`weight_tons`), and counts of specific items like plastic bottles (`plastic_bottles`), cigarette butts (`cigarette_butts`), and sports balls (`sports_balls`). For example, the total weight of trash collected by **Professor Trash Wheel** is `r proff_df |> summarise(total = sum(weight_tons, na.rm = TRUE)) |> pull(total)` tons. In contrast, **Gwynns Falls Trash Wheel** collected `r gwynns_df |> filter(month == "June", year == 2022) |> summarise(total = sum(cigarette_butts, na.rm = TRUE)) |> pull(total)|>format(scientific=FALSE)` cigarette butts in June 2022 alone. These summaries highlight both the scale of debris removed and the variation in composition across trash wheels and time.
+The combined Trash Wheel dataset includes `r nrow(trash_tidy)` observations across the three trash wheels (Mr. Trash Wheel, Professor Trash Wheel, and Gwynns Falls Trash Wheel). 
+Each row corresponds to a dumpster load of trash, with key variables such as the date of collection (`date`), the total weight in tons (`weight_tons`), and counts of specific items like plastic bottles (`plastic_bottles`), cigarette butts (`cigarette_butts`), and sports balls (`sports_balls`). 
+For example, the total weight of trash collected by **Professor Trash Wheel** is `r proff_df |> summarise(total = sum(weight_tons, na.rm = TRUE)) |> pull(total)` tons.
 
-Question 3
+In contrast, **Gwynns Falls Trash Wheel** collected `r gwynns_df |> filter(month == "June", year == 2022) |> summarise(total = sum(cigarette_butts, na.rm = TRUE)) |> pull(total)|>format(scientific=FALSE)` cigarette butts in June 2022 alone. These summaries highlight both the scale of debris removed and the variation in composition across trash wheels and time.
+
+##Question 3
 
 Importing Zip codes csv
 ```{r, message=FALSE}
@@ -75,22 +79,23 @@ zips_df=
   read_csv("Zip Codes.csv", na = c("NA", ".", ""))|>
  janitor::clean_names() |>
 mutate(
-    zip_code = as.numeric(zip_code),
+  case_match(county,
+     "New York" ~ "Manhattan", .default = county),
+  county = if_else(zip_code == "11693", "Queens", county), 
+           county = if_else(zip_code == "11201", "Kings", county),
+    zip_code = as.character(zip_code),
     county   = county |> stringr::str_to_lower() |> gsub("county", "", x = _) |> stringr::str_squish(),
-    county = case_when(
-      zip_code == "11693" ~ "queens",
-      zip_code == "11201" ~ "kings",
-      TRUE ~ county
-    )
-  ) |> 
+    )|> 
 select(county, zip_code, neighborhood, everything())|>
+  arrange(zip_code, county, neighborhood) |>
+  distinct(zip_code, .keep_all = TRUE)|>
 relocate (zip_code, county)
 ```
 Importing Zip zori csv
 ```{r , message=FALSE} 
 library(tidyverse)
 zori_df=
-  read_csv("Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv", na = c("NA", ".", ""))|>
+ read_csv("Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv", na = c("NA", ".", ""))|>
  janitor::clean_names() |>
 select (-region_type, -state_name, -state,-city)|>
   rename(zip_code=region_name,county=county_name)|>
@@ -103,25 +108,22 @@ select (-region_type, -state_name, -state,-city)|>
     county = str_to_lower(county),       
     county = gsub("county", "", county), 
     date = gsub("x","", date),
+     zip_code = as.character(zip_code),
       date   = as.Date(sub("^x", "", date), format = "%Y_%m_%d"),
     county = str_squish(county),
     price= as.numeric(price)  
-  ) |>
-  arrange(price) |>
-  relocate (zip_code, county, price, date)
+  ) 
 ```
 
 combine the two datasets using leftjoin
 ```{r}
-zorizip_tidy <- 
+ zorizip_tidy <- 
   left_join(
-    zori_df,
-    zips_df,
-    by = c("zip_code", "county"),          
-    relationship = "many-to-many"        
-  ) |>
-  relocate(zip_code, county, neighborhood, price, date)
-
+     zori_df,
+     zips_df,
+     by = c("zip_code", "county")          
+   ) |>
+   relocate(zip_code, county, neighborhood, price, date)
 ```
 
 The zorizip_tidy dataset, we can track rent trends over time within each zipcode, county and neighbourhood. The combined zorizip_tidy dataset includes `r nrow(zorizip_tidy)` observations. Each row corresponds to a particular ZIP code at a specific date, with key variables including the observed rent index (`price`), geographic identifiers (e.g. `zip_code`, `county`, `neighborhood`), and data such as the `file_date` of the ZIP metadata. The number of unique ZIP codes is `r zorizip_tidy |> distinct(zip_code) |> nrow()`,and there are
@@ -150,7 +152,7 @@ filter(month == 1) |>
   arrange(price_diff) |>           
 arrange(price_diff) |> 
   head(10)|>
-  rename(borough=)|>
-  select(zip_code, county, neighborhood, month, `2020`, `2021`, price_diff)
+  rename(borough = county)|>
+  select(zip_code, borough, neighborhood, month, `2020`, `2021`, price_diff)
 ```
 
