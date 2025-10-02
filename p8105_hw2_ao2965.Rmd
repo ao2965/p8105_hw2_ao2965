@@ -155,4 +155,9 @@ arrange(price_diff) |>
   rename(borough = county)|>
   select(zip_code, borough, neighborhood, month, `2020`, `2021`, price_diff)
 ```
+All of the top 10 ZIP codes with the largest absolute drops are in Manhattan (or “New York” county), mostly in lower Manhattan, Gramercy, Chelsea, Lower East Side, etc. This suggests that the biggest rent declines in that period were concentrated in Manhattan’s more central or premium neighborhoods.
+The largest drop is for ZIP 10007 (Lower Manhattan): about –$912.60 (i.e. rents in January 2021 were 912.5966 lower than in January 2020). That is a sharp drop in a single year for a single month comparison.
+```{r}
+merge_table |>knitr::kable()
+```
 
